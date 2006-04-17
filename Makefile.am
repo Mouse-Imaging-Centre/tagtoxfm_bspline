@@ -12,4 +12,4 @@ m4_files = m4/mni_REQUIRE_LIB.m4 m4/mni_REQUIRE_MNILIBS.m4	 \
 	m4/smr_OPTIONAL_LIB.m4 m4/smr_REQUIRED_LIB.m4		 \
 	m4/smr_WITH_BUILD_PATH.m4
 
-mincblob_SOURCES = tagtoxfm_bspline.cc TBSpline.cc
+tagtoxfm_bspline_SOURCES = tagtoxfm_bspline.cc TBSpline.cc
