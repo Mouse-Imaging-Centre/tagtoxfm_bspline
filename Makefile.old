@@ -1,0 +1,18 @@
+
+
+CC = g++-3.4
+CFLAGS = -g
+INCLUDES = -I/projects/mice/share/arch/linux64/include
+LIBPATH = -L/projects/mice/share/arch/linux64/lib
+LIBS = -lminc2 -lvolume_io2 -lhdf5 -lnetcdf /usr/lib/liblapack.so.3.0
+
+all: tagtoxfm_bspline
+
+tagtoxfm_bspline: tagtoxfm_bspline.o TBSpline.o 
+	$(CC) $(CFLAGS) -o  tagtoxfm_bspline tagtoxfm_bspline.o TBSpline.o ${LIBPATH} ${LIBS}
+
+TBSpline.o: TBSpline.cc TBSpline.h
+	$(CC)  $(CFLAGS) -c TBSpline.cc ${INCLUDES}
+
+tagtoxfm_bspline.o: tagtoxfm_bspline.cc tagtoxfm_bspline.h
+	$(CC) $(CFLAGS) -c  tagtoxfm_bspline.cc ${INCLUDES}
