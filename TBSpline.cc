@@ -28,6 +28,9 @@ $State: Exp $
 @CALLS      : 
 @CREATED    : April 21, 1996 (John G. Sled)
 @MODIFIED   : Log: TBSpline.c,v 
+ Modified to use Blitz++ C++ array library instead of EBTKS
+ April 7, 2006  jgsled
+
  * Revision 1.4  1996/07/29  16:04:06  jgsled
  * last version before modification for inclusion in the AI source tree
  *

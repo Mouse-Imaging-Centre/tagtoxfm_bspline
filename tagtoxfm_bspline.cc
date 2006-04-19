@@ -271,7 +271,7 @@ void determine_domain(int n_tag_points, Real **tags_volume1,
   /* set domain to that of grid volume */
   for(i = 0; i < N_DIMENSIONS; i++)
     {
-      if(separations[i] > 0) {
+      if(separations[i+1] > 0) {
         domain(i,0) = -0.5*separations[i+1];
         domain(i,1) = (sizes[i+1]-0.5)*separations[i+1];
       }
