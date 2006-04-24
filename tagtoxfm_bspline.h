@@ -3,7 +3,7 @@
 @DESCRIPTION: Header file for tagtoxfm_bspline.cxx
 @GLOBALS    : 
 @CALLS      : 
-@CREATED    : April 7, 2006
+@CREATED    : April 7, 2006  John G. Sled
 @MODIFIED   : 
 ---------------------------------------------------------------------------- */
 
@@ -11,7 +11,7 @@
 
 int inverse = false;
 int clobber = false;
-int rigid = true;
+int rigid = false;
 double lambda = 0.01;      // scale invariant smoothing parameter
 double distance = 10;     // distance between basis functions
 double real_range[2] = { -3.0, 3.0 };
@@ -26,10 +26,10 @@ ArgvInfo argTable[] = {
        "Overwrite any existing xfm file."},
    {"-noclobber", ARGV_CONSTANT, (char *) FALSE, (char *) &clobber,
        "Do not overwrite any existing xfm file."},
-   {"-with_rigid", ARGV_CONSTANT, (char *) TRUE, (char *) &rigid,
-       "Estimate rigid body transform before computing non-linear component of transform (default)."},
+   /* {"-with_rigid", ARGV_CONSTANT, (char *) TRUE, (char *) &rigid,
+      "Estimate rigid body transform before computing non-linear component of transform (default)."}, */
    {"-without_rigid", ARGV_CONSTANT, (char *) FALSE, (char *) &rigid,
-       "Do not estimate rigid body transform."},
+   "Do not estimate rigid body transform (default)."},
    {"-lambda", ARGV_FLOAT, (char *) 1, (char *) &lambda, 
    "Scale invariant smoothing parameter.  The default is chosen\n to provide minimal"
    " smoothing except in regions of missing data."},
