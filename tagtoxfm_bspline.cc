@@ -42,6 +42,11 @@ int main(int argc, char *argv[])
   likefile = argv[2];
   xfmfile = argv[3];
 
+  if (!clobber && file_exists(xfmfile)) {
+     (void) fprintf(stderr, "%s: xfm file \"%s\" already exists.\n",
+                    pname, xfmfile);
+     exit(EXIT_FAILURE);
+  }
 
   /* Read in tag file */
   if ((open_file_with_default_suffix(tagfile,
@@ -112,11 +117,6 @@ int main(int argc, char *argv[])
 		 tagfile, inverse_string);
 
   /* Save transformation */
-  if (!clobber && file_exists(xfmfile)) {
-     (void) fprintf(stderr, "%s: xfm file \"%s\" already exists.\n",
-                    pname, xfmfile);
-     exit(EXIT_FAILURE);
-  }
   if (output_transform_file(xfmfile, comment, &transform) != OK) {
      (void) fprintf(stderr, "%s: Error writing xfm file %s\n", 
                     pname, xfmfile);
@@ -153,6 +153,7 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
   Real displacement;
   General_transform linear_transform, *v_to_w_transform,
     grid_transform, v_to_w_and_linear_transform;
+  int clip_warning_flag = 0;  // set to 1 if output range exceeded
 
 
   if (rigid_flag) {
@@ -227,6 +228,11 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
 					k1*separations[2],
 					k2*separations[3]);
 	  set_volume_real_value(grid_volume, i, k0, k1, k2, 0, displacement);
+	  if (!clip_warning_flag) {
+	    if (displacement > real_range[1] or displacement < real_range[0]) {
+	      clip_warning_flag = 1; // clipping has occurred
+	    }
+	  }
 	}
       }
     }
@@ -234,13 +240,17 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
   }
   terminate_progress_report(&progress);
 
+  if (clip_warning_flag) {
+    fprintf(stderr, "Warning: output values exceed real range of output volume.\nConsider rerunning tagtoxfm_bspline with the -real_range option.\n");
+  }
+
   /* create grid transform using grid transform volume */
   create_grid_transform(&grid_transform, grid_volume);
 
   if (rigid_flag){
     /* concatenate linear transform with grid_transform */
-    concat_general_transforms(transform, &linear_transform,
-			      &grid_transform);
+    concat_general_transforms(&linear_transform,
+			      &grid_transform, transform);
   }
   else
   {

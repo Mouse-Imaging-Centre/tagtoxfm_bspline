@@ -8,13 +8,14 @@
 ---------------------------------------------------------------------------- */
 
 #define MIN_POINTS 4
+#define DEFAULT_REAL_RANGE 3.0
 
 int inverse = false;
 int clobber = false;
-int rigid = false;
+int rigid = true;
 double lambda = 0.01;      // scale invariant smoothing parameter
 double distance = 10;     // distance between basis functions
-double real_range[2] = { -3.0, 3.0 };
+double real_range[2] = { -DEFAULT_REAL_RANGE, DEFAULT_REAL_RANGE };
 
 /* Argument table */
 ArgvInfo argTable[] = {
@@ -26,10 +27,10 @@ ArgvInfo argTable[] = {
        "Overwrite any existing xfm file."},
    {"-noclobber", ARGV_CONSTANT, (char *) FALSE, (char *) &clobber,
        "Do not overwrite any existing xfm file."},
-   /* {"-with_rigid", ARGV_CONSTANT, (char *) TRUE, (char *) &rigid,
-      "Estimate rigid body transform before computing non-linear component of transform (default)."}, */
+   {"-with_rigid", ARGV_CONSTANT, (char *) TRUE, (char *) &rigid,
+      "Estimate rigid body transform before computing non-linear component of transform (default)."},
    {"-without_rigid", ARGV_CONSTANT, (char *) FALSE, (char *) &rigid,
-   "Do not estimate rigid body transform (default)."},
+   "Do not estimate rigid body transform."},
    {"-lambda", ARGV_FLOAT, (char *) 1, (char *) &lambda, 
    "Scale invariant smoothing parameter.  The default is chosen\n to provide minimal"
    " smoothing except in regions of missing data."},
@@ -37,7 +38,7 @@ ArgvInfo argTable[] = {
    "Distance between basis functions in mm.  This parameter\n determines the overall"
    " smoothness."},
    {"-range", ARGV_FLOAT, (char *) 2, (char *) &real_range, 
-    "range of values for grid transform [default: -10 10]"},
+    "range of values for grid transform [default: -3 3]"},
    {NULL, ARGV_END, NULL, NULL, NULL}
 };
 
