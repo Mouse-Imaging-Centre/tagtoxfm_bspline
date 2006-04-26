@@ -179,7 +179,7 @@ public:
 
 protected:
   void bendingEnergyTensor(const IntArray &n, DblMat &J);
-  DblMat bendingEnergy(int size, int order);
+  void bendingEnergy(DblMat &energy, int size, int order);
   inline double cube(double x) const { return x*x*x; };
   DblArray solveSymmetricSystem(DblMat &A, DblArray b, int *info);
 };

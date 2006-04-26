@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  /* If inverting, switch order of points */
-  if (inverse) {
+  /* If not inverting, switch order of points */
+  if (!inverse) {
     temp_tags = tags_volume1;
     tags_volume1 = tags_volume2;
     tags_volume2 = temp_tags;

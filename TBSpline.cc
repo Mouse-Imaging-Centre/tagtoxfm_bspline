@@ -398,7 +398,7 @@ TBSpline::bendingEnergyTensor(const IntArray &n, DblMat &J)
   // deal with special case first
   if(nDimensions == 1)
     {
-      J.reference(bendingEnergy(n(0), 2));
+      bendingEnergy(J, n(0), 2);
       return;
     }
 
@@ -415,7 +415,7 @@ TBSpline::bendingEnergyTensor(const IntArray &n, DblMat &J)
   DblMat (*bendingMatrix)[3] = new DblMat[nDimensions][3];  
   for(i = 0; i < nDimensions; i++)
     for(j = 0; j < 3; j++)
-      bendingMatrix[i][j].reference(bendingEnergy(n(i),j));
+      bendingEnergy(bendingMatrix[i][j], n(i),j);
   
   // allocate large matrix 
   J.resize(nProduct,nProduct);
@@ -466,20 +466,22 @@ TBSpline::bendingEnergyTensor(const IntArray &n, DblMat &J)
 
 // compute 1-D bending energy matrices
 // 
-// returns a size by size matrix formed with order'th derivatives
+// returns, using the first argument as an output parameter,
+//  a size by size matrix formed with order'th derivatives
 //
-DblMat 
-TBSpline::bendingEnergy(int size, int order)
+void
+TBSpline::bendingEnergy(DblMat &energy, int size, int order)
 {
   int i,j,k,l;  // (vivek) changed all from unsigned to signed
   int interval, offset, region;
   const int spline = 4;  // ie  splines are cubic
-  DblMat energy(size, size);
 
   if(size < 4 || order < 0 || order > 2)  
     // bending energy not defined for size < 4
-    return(energy);
+    return;
 
+  energy.resize(size, size);
+  energy = 0;
 
   // standardized cubic B-spline defined on [-4 0] with knots at
   //  -4 -3 -2 -1 0
@@ -611,7 +613,7 @@ TBSpline::bendingEnergy(int size, int order)
       energy(1,1) = integral(1,0);
       energy(size-2,size-2) = integral(1,0);
     }
-  return(energy);
+  return;
 }
 
 
@@ -819,7 +821,8 @@ TBSpline::test_J(void)
   for(int j = 0; j < 3; j++)
     for(int i = 4; i < 8; i++)
       {
-	DblMat J = bendingEnergy(i, j);
+	DblMat J;
+	bendingEnergy(J, i, j);
 	printf("Size %d, derivative %d\n", i, j);
 	cout << J << endl;
       }
