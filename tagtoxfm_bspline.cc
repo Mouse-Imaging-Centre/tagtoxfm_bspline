@@ -69,10 +69,10 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  if (n_tag_points < MIN_POINTS) {
+  if (n_tag_points < MIN_POINTS_LINEAR) {
     (void) fprintf(stderr, 
 		   "%s: Need at least %d points (only %d in %s)\n", 
-		   pname, MIN_POINTS, n_tag_points, tagfile);
+		   pname, MIN_POINTS_LINEAR, n_tag_points, tagfile);
     exit(EXIT_FAILURE);
   }
 
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
   if(compute_tbspline_transform_from_tags(n_tag_points, tags_volume1, 
 					tags_volume2, &transform,
 					  grid_volume, distance, lambda,
-					  rigid)  
+					  with_linear, transform_type)  
      != EXIT_SUCCESS) {
     exit(EXIT_FAILURE);
   }
@@ -141,11 +141,12 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
 					 Volume grid_volume, 
 					 Real distance,
 					 Real lambda,
-					 int rigid_flag) 
+					 int with_linear_flag,
+					 Trans_type transform_type) 
 {
   DblMat domain(N_DIMENSIONS,2);
   Real point[N_DIMENSIONS];
-  Real voxel[N_DIMENSIONS];
+  Real voxel[N_DIMENSIONS+1];
   float fpoint[N_DIMENSIONS];
   TBSpline *spline[N_DIMENSIONS];
   int i, j;
@@ -156,10 +157,10 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
   int clip_warning_flag = 0;  // set to 1 if output range exceeded
 
 
-  if (rigid_flag) {
+  if (with_linear_flag) {
     /* determine an rigid transformation using the tag points */
-    compute_transform_from_tags(n_tag_points, tags_volume1, tags_volume2,
-				TRANS_LSQ6, &linear_transform);
+    compute_transform_from_tags(n_tag_points, tags_volume2, tags_volume1,
+				transform_type, &linear_transform);
 
   
     /* apply linear transformation to the grid volume */
@@ -247,7 +248,7 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
   /* create grid transform using grid transform volume */
   create_grid_transform(&grid_transform, grid_volume);
 
-  if (rigid_flag){
+  if (with_linear_flag){
     /* concatenate linear transform with grid_transform */
     concat_general_transforms(&linear_transform,
 			      &grid_transform, transform);
