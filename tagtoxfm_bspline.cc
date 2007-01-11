@@ -15,6 +15,7 @@ extern "C" {
 #include <volume_io.h>
 #include <bicpl/compute_xfm.h>
 #define public
+#define BICAPI
 #include <bicpl/trans_prototypes.h>
 }
 
