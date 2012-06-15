@@ -54,9 +54,6 @@ static char rcsid[] = "$Header: /software/source/libraries/EBTKS/src/TBSpline.cc
 #include <stdio.h>
 #endif
 
-using namespace std;
-
-
 //-----------------------------------------------------------------------
 // LAPACK definitions
 typedef long int _integer;
@@ -372,7 +369,7 @@ TBSpline::saveState(char *filename) const
   coef.saveMatlab(filename, "coef");
   _domain.saveMatlab(filename, "domain");
 #else
-  cerr << "Warning: saveState function not available in class TBSpline\n";
+  std::cerr << "Warning: saveState function not available in class TBSpline\n";
 #endif 
 }
 
@@ -824,7 +821,7 @@ TBSpline::test_J(void)
 	DblMat J;
 	bendingEnergy(J, i, j);
 	printf("Size %d, derivative %d\n", i, j);
-	cout << J << endl;
+	std::cout << J << std::endl;
       }
 
   printf("Bending Energy Tensor: size = {4 , 5}\n");
@@ -832,7 +829,7 @@ TBSpline::test_J(void)
   int nvalues[2] = { 4, 5};
   IntArray n(nvalues,2); 
   bendingEnergyTensor(n, J);
-  cout << J << endl;
+  std::cout << J << std::endl;
 
 #ifdef HAVE_MATLAB
   J.saveMatlab("bending.mat","J");
@@ -1169,7 +1166,7 @@ TBSplineVolume::saveState(char *filename) const
   DblMat coef(_coef);
   coef.saveMatlab(filename, "coef");
 #else
-  cerr << "Warning: saveState function not available in class TBSplineVolume\n";
+  std::cerr << "Warning: saveState function not available in class TBSplineVolume\n";
 #endif 
 }
 

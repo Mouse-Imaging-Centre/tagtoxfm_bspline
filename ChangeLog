@@ -1,0 +1,2 @@
+2012-06-15 Matthijs van Eede <matthijs@phenogenomics.ca>
+  *removed "using namespace std" from TBSpline, and added in the namespace in front of cout, cerr, and endl. 
