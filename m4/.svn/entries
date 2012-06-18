@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="3"
+   name=""
+   committed-date="2006-01-09T16:06:10.242275Z"
+   url="http://phenogenomics.ca:10201/subversion/mni-m4/tags/jan-2006"
+   kind="dir"
+   uuid="412c58cf-ee09-0410-8dff-d136ba358b8d"
+   revision="3"/>
+<entry
+   committed-rev="2"
+   name="smr_CGAL_MAKEFILE.m4"
+   text-time="2006-04-18T18:12:37.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="5d77ca3d59cf1c9bd657725d975927d1"
+   kind="file"
+   prop-time="2006-04-18T18:12:36.000000Z"/>
+<entry
+   committed-rev="2"
+   name="mni_REQUIRE_LIB.m4"
+   text-time="2006-04-18T18:12:37.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="bd9c2fcd4d36c78946069bc750decc73"
+   kind="file"
+   prop-time="2006-04-18T18:12:36.000000Z"/>
+<entry
+   committed-rev="2"
+   name="mni_REQUIRE_OPENINVENTOR.m4"
+   text-time="2006-04-18T18:12:37.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="ca8d6037f137dbc4b3441c572dfa393b"
+   kind="file"
+   prop-time="2006-04-18T18:12:36.000000Z"/>
+<entry
+   committed-rev="2"
+   name="smr_REQUIRED_LIB.m4"
+   text-time="2006-04-18T18:12:37.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="a3c80a9b2ee4845ab84de3ad02f11ed0"
+   kind="file"
+   prop-time="2006-04-18T18:12:37.000000Z"/>
+<entry
+   committed-rev="2"
+   name="smr_WITH_BUILD_PATH.m4"
+   text-time="2006-04-18T18:12:37.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="54545c26b1957364e93bc4d8f85b98e0"
+   kind="file"
+   prop-time="2006-04-18T18:12:37.000000Z"/>
+<entry
+   committed-rev="2"
+   name="ChangeLog"
+   text-time="2006-04-18T18:12:38.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="1e1ac74461dca10ea48468d06242e95f"
+   kind="file"
+   prop-time="2006-04-18T18:12:37.000000Z"/>
+<entry
+   committed-rev="2"
+   name="mni_REQUIRE_MNILIBS.m4"
+   text-time="2006-04-18T18:12:38.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="52484bab7efb56c2d78e7eb5d4d1b590"
+   kind="file"
+   prop-time="2006-04-18T18:12:37.000000Z"/>
+<entry
+   committed-rev="2"
+   name="smr_OPTIONAL_LIB.m4"
+   text-time="2006-04-18T18:12:38.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="9fd6c1025f2c8e982a4eafefcc9156b1"
+   kind="file"
+   prop-time="2006-04-18T18:12:37.000000Z"/>
+<entry
+   committed-rev="2"
+   name="mni_cxx_have_koenig_lookup.m4"
+   text-time="2006-04-18T18:12:38.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="ce62b875fb92de60024ebe0e076a9c79"
+   kind="file"
+   prop-time="2006-04-18T18:12:37.000000Z"/>
+<entry
+   committed-rev="2"
+   name="README"
+   text-time="2006-04-18T18:12:38.000000Z"
+   committed-date="2006-01-09T16:04:00.609399Z"
+   checksum="f0d02ff10e38e0145ada8c7a7a8e924f"
+   kind="file"
+   prop-time="2006-04-18T18:12:37.000000Z"/>
+</wc-entries>
