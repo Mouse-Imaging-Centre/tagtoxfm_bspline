@@ -59,15 +59,15 @@ ArgvInfo argTable[] = {
 
 
 int compute_tbspline_transform_from_tags(int n_tag_points, 
-					 Real **tags_volume1, 
-					 Real **tags_volume2, 
-					 General_transform *transform,
-					 Volume grid_volume, 
-					 Real distance,
-					 Real lambda,
+					 VIO_Real **tags_volume1, 
+					 VIO_Real **tags_volume2, 
+					 VIO_General_transform *transform,
+					 VIO_Volume grid_volume, 
+					 VIO_Real distance,
+					 VIO_Real lambda,
 					 int with_linear_flag,
 					 Trans_type transform_type);
 
-int create_grid_volume_from_example(char *likefile, Volume &grid_volume); 
-void determine_domain(int n_tag_points, Real **tags_volume1,
-		      Volume grid_volume, DblMat &domain);
+int create_grid_volume_from_example(char *likefile, VIO_Volume &grid_volume); 
+void determine_domain(int n_tag_points, VIO_Real **tags_volume1,
+		      VIO_Volume grid_volume, DblMat &domain);

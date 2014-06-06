@@ -7,9 +7,11 @@ AC_DEFUN([mni_REQUIRE_MINC],
     mni_REQUIRE_LIB(m,[#include <math.h>],[double x = sqrt(3.);])
     mni_REQUIRE_LIB(netcdf,[#include <netcdf.h>],[int i = ncopen("",0);])
     if test "$with_minc2" = "yes"; then
+        mni_REQUIRE_LIB(z,[#include <zlib.h>],[int f = compress2;])
         mni_REQUIRE_LIB(hdf5,[#include <hdf5.h>],[int f = H5Fopen("",0,H5P_DEFAULT);])
         mni_REQUIRE_LIB(minc2,[#include <minc.h>],[int i = miicv_create();])
         AC_DEFINE([MINC2], 1, [Define if should build with MINC 2.0])
+        AC_DEFINE([HAVE_MINC2], 1, [Define that we should build with MINC 2.0 agian])
     else
         mni_REQUIRE_LIB(minc,[#include <minc.h>],[int i = miicv_create();])
     fi
@@ -21,17 +23,17 @@ AC_DEFUN([mni_REQUIRE_VOLUMEIO],
 [
     AC_REQUIRE([mni_REQUIRE_MINC])
     if test "$with_minc2" = "yes"; then
-      mni_REQUIRE_LIB(volume_io2,
+      mni_REQUIRE_LIB(minc2,
   	              [#include <volume_io.h>],
-                      [Volume vol; 
-	 	      Real voxel = 0;
-                      Real x = convert_voxel_to_value(vol,voxel);])
+                      [VIO_Volume vol; 
+	 	      VIO_Real voxel = 0;
+                      VIO_Real x = convert_voxel_to_value(vol,voxel);])
     else
       mni_REQUIRE_LIB(volume_io,
   	              [#include <volume_io.h>],
-                      [Volume vol; 
-	 	      Real voxel = 0;
-                      Real x = convert_voxel_to_value(vol,voxel);])
+                      [VIO_Volume vol; 
+	 	      VIO_Real voxel = 0;
+                      VIO_Real x = convert_voxel_to_value(vol,voxel);])
     fi
 ])
 
@@ -40,10 +42,10 @@ AC_DEFUN([mni_REQUIRE_BICPL],
     AC_REQUIRE([mni_REQUIRE_VOLUMEIO])
     mni_REQUIRE_LIB(bicpl,
 		    [#include <bicpl.h>],
-		    [File_formats format;
+		    [VIO_File_formats format;
                      int n_obj;
                      object_struct** obj_list;
-                     Status s = input_graphics_file("",&format,&n_obj,&obj_list)])
+                     VIO_Status s = input_graphics_file("",&format,&n_obj,&obj_list)])
 ])
 
 AC_DEFUN([mni_REQUIRE_EBTKS],
@@ -56,6 +58,7 @@ AC_DEFUN([mni_REQUIRE_EBTKS],
 AC_DEFUN([mni_REQUIRE_OOBICPL],
 [
     AC_REQUIRE([mni_REQUIRE_BICPL])
+    AC_DEFINE([HAVE_MINC1], 1, [Define that we need MINC 1.0 for NC_UNSPECIFIED])
 
     # the regular expression C library
     smr_REQUIRED_LIB(pcre, pcre_compile, pcre.h)
