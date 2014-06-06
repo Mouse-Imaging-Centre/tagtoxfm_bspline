@@ -12,6 +12,10 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 #include <ParseArgv.h>
+
+#define HAVE_MINC2 1
+#define HAVE_MINC1 1
+
 #include <volume_io.h>
 #include <bicpl/compute_xfm.h>
 #define public
@@ -26,9 +30,9 @@ int main(int argc, char *argv[])
 {
   char *pname, *tagfile, *likefile, *xfmfile;
   int n_volumes, n_tag_points;
-  Real **tags_volume1, **tags_volume2, **temp_tags;
-  General_transform transform;
-  Volume like_volume, grid_volume;
+  VIO_Real **tags_volume1, **tags_volume2, **temp_tags;
+  VIO_General_transform transform;
+  VIO_Volume like_volume, grid_volume;
   char *inverse_string, comment[512];
   FILE *fp;
 
@@ -52,10 +56,10 @@ int main(int argc, char *argv[])
   /* Read in tag file */
   if ((open_file_with_default_suffix(tagfile,
                   get_default_tag_file_suffix(),
-				     READ_FILE, ASCII_FORMAT, &fp) != OK) ||
+				     READ_FILE, ASCII_FORMAT, &fp) != VIO_OK) ||
       (input_tag_points(fp, &n_volumes, &n_tag_points, 
 			&tags_volume1, &tags_volume2, 
-			NULL, NULL, NULL, NULL) != OK)) {
+			NULL, NULL, NULL, NULL) != VIO_OK)) {
     (void) fprintf(stderr, "%s: Error reading tag file %s\n", 
 		   pname, tagfile);
     exit(EXIT_FAILURE);
@@ -118,7 +122,7 @@ int main(int argc, char *argv[])
 		 tagfile, inverse_string);
 
   /* Save transformation */
-  if (output_transform_file(xfmfile, comment, &transform) != OK) {
+  if (output_transform_file(xfmfile, comment, &transform) != VIO_OK) {
      (void) fprintf(stderr, "%s: Error writing xfm file %s\n", 
                     pname, xfmfile);
      exit(EXIT_FAILURE);
@@ -136,24 +140,24 @@ int main(int argc, char *argv[])
    returns: EXIT_SUCESS or EXIT_FAILURE
 */
 int compute_tbspline_transform_from_tags(int n_tag_points, 
-					 Real **tags_volume1, 
-					 Real **tags_volume2, 
-					 General_transform *transform,
-					 Volume grid_volume, 
-					 Real distance,
-					 Real lambda,
+					 VIO_Real **tags_volume1, 
+					 VIO_Real **tags_volume2, 
+					 VIO_General_transform *transform,
+					 VIO_Volume grid_volume, 
+					 VIO_Real distance,
+					 VIO_Real lambda,
 					 int with_linear_flag,
 					 Trans_type transform_type) 
 {
-  DblMat domain(N_DIMENSIONS,2);
-  Real point[N_DIMENSIONS];
-  Real voxel[N_DIMENSIONS+1];
-  float fpoint[N_DIMENSIONS];
-  TBSpline *spline[N_DIMENSIONS];
+  DblMat domain(VIO_N_DIMENSIONS,2);
+  VIO_Real point[VIO_N_DIMENSIONS];
+  VIO_Real voxel[VIO_N_DIMENSIONS+1];
+  float fpoint[VIO_N_DIMENSIONS];
+  TBSpline *spline[VIO_N_DIMENSIONS];
   int i, j;
   int k0, k1, k2;
-  Real displacement;
-  General_transform linear_transform, *v_to_w_transform,
+  VIO_Real displacement;
+  VIO_General_transform linear_transform, *v_to_w_transform,
     grid_transform, v_to_w_and_linear_transform;
   int clip_warning_flag = 0;  // set to 1 if output range exceeded
 
@@ -176,7 +180,7 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
 			      tags_volume1[j][0], tags_volume1[j][1], 
 			      tags_volume1[j][2], &point[0], &point[1], 
 			      &point[2]);
-      for (i = 0; i < N_DIMENSIONS; i++) {
+      for (i = 0; i < VIO_N_DIMENSIONS; i++) {
 	tags_volume1[j][i] = point[i]; 
       }
     }
@@ -187,15 +191,15 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
 
 
   /* determine coordinates for sampling of volume */
-  int sizes[N_DIMENSIONS+1];
-  Real origin[] = { 0.0, 0.0, 0.0};
-  Real separations[N_DIMENSIONS+1];
+  int sizes[VIO_N_DIMENSIONS+1];
+  VIO_Real origin[] = { 0.0, 0.0, 0.0};
+  VIO_Real separations[VIO_N_DIMENSIONS+1];
   
   get_volume_sizes(grid_volume, sizes);
   get_volume_separations(grid_volume, separations);
 
   /* create tensor cubic B spline basis */
-  for (i = 0; i < N_DIMENSIONS; i++) {
+  for (i = 0; i < VIO_N_DIMENSIONS; i++) {
     spline[i] = new TBSplineVolume(domain, origin, separations,
 				     &sizes[1], distance, lambda, TRUE);
   }
@@ -204,14 +208,14 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
   for (j = 0; j < n_tag_points; j++) {
     convert_world_to_voxel(grid_volume, tags_volume1[j][0], 
 			   tags_volume1[j][1], tags_volume1[j][2], voxel);
-    for (i = 0; i < N_DIMENSIONS; i++) {
+    for (i = 0; i < VIO_N_DIMENSIONS; i++) {
       fpoint[i] = (float) voxel[i+1]*separations[i+1];
     }
-    for (i = 0; i < N_DIMENSIONS; i++) {
+    for (i = 0; i < VIO_N_DIMENSIONS; i++) {
       spline[i]->addDataPoint(fpoint, tags_volume2[j][i]-tags_volume1[j][i]);
     }
   }
-  for (i = 0; i < N_DIMENSIONS; i++) {
+  for (i = 0; i < VIO_N_DIMENSIONS; i++) {
     if(spline[i]->fit() == FALSE) { // fit splines to the data
       fprintf(stderr, "Fatal Error: Spline fit failed.\n");
       return EXIT_FAILURE;
@@ -219,13 +223,13 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
   }
 
   /* evaluate spline for each voxel in grid transform volume */
-  progress_struct progress;
+  VIO_progress_struct progress;
   initialize_progress_report(&progress, FALSE, sizes[1],
 			     "Evaluating splines");
   for (k0 = 0; k0 < sizes[1]; k0++) {
     for (k1 = 0; k1 < sizes[2]; k1++) {
       for (k2 = 0; k2 < sizes[3]; k2++) {
-	for (i = 0; i < N_DIMENSIONS; i++) {
+	for (i = 0; i < VIO_N_DIMENSIONS; i++) {
 	  displacement = (*(spline[i]))(k0*separations[1], 
 					k1*separations[2],
 					k2*separations[3]);
@@ -247,7 +251,7 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
   }
 
   /* create grid transform using grid transform volume */
-  create_grid_transform(&grid_transform, grid_volume);
+  create_grid_transform(&grid_transform, grid_volume, NULL);
 
   if (with_linear_flag){
     /* concatenate linear transform with grid_transform */
@@ -269,19 +273,19 @@ int compute_tbspline_transform_from_tags(int n_tag_points,
    all voxels of grid_volume using voxel coordinates
 
    return: domain (2 by N matrix) as an output variable */
-void determine_domain(int n_tag_points, Real **tags_volume1,
-		      Volume grid_volume, DblMat &domain)
+void determine_domain(int n_tag_points, VIO_Real **tags_volume1,
+		      VIO_Volume grid_volume, DblMat &domain)
 {
-  int sizes[N_DIMENSIONS+1];
+  int sizes[VIO_N_DIMENSIONS+1];
   int i, j;
-  Real voxel[N_DIMENSIONS+1];
-  Real separations[N_DIMENSIONS+1];
+  VIO_Real voxel[VIO_N_DIMENSIONS+1];
+  VIO_Real separations[VIO_N_DIMENSIONS+1];
 
   get_volume_sizes(grid_volume, sizes);
   get_volume_separations(grid_volume, separations);
 
   /* set domain to that of grid volume */
-  for(i = 0; i < N_DIMENSIONS; i++)
+  for(i = 0; i < VIO_N_DIMENSIONS; i++)
     {
       if(separations[i+1] > 0) {
         domain(i,0) = -0.5*separations[i+1];
@@ -299,7 +303,7 @@ void determine_domain(int n_tag_points, Real **tags_volume1,
     convert_world_to_voxel(grid_volume, tags_volume1[j][0], 
 			   tags_volume1[j][1], tags_volume1[j][2],
 			   voxel);
-    for (i = 0; i < N_DIMENSIONS; i++) {
+    for (i = 0; i < VIO_N_DIMENSIONS; i++) {
       if (domain(i, 0) > voxel[i+1]*separations[i+1]) {
 	domain(i, 0) = voxel[i+1]*separations[i+1];    /* set new minimum */
       }
@@ -311,30 +315,30 @@ void determine_domain(int n_tag_points, Real **tags_volume1,
 }
 
 
-int create_grid_volume_from_example(char *likefile, Volume &grid_volume)
+int create_grid_volume_from_example(char *likefile, VIO_Volume &grid_volume)
 {
-  int sizes[N_DIMENSIONS+1];
-  General_transform *transform, *new_transform;
-  Volume like_volume;
-  Real cosine[N_DIMENSIONS];
-  Real separations[N_DIMENSIONS+1];
+  int sizes[VIO_N_DIMENSIONS+1];
+  VIO_General_transform *transform, *new_transform;
+  VIO_Volume like_volume;
+  VIO_Real cosine[VIO_N_DIMENSIONS];
+  VIO_Real separations[VIO_N_DIMENSIONS+1];
   int i;
-  Real v_origin[4] = {0.0, 0.0, 0.0, 0.0};
-  Real w_origin[3];
+  VIO_Real v_origin[4] = {0.0, 0.0, 0.0, 0.0};
+  VIO_Real w_origin[3];
 
   char *standard_dimension_order[3] = {MIzspace, MIyspace, MIxspace};
   char *grid_dimension_order[4] = 
     { MIvector_dimension, MIzspace, MIyspace, MIxspace };
 
-  if (input_volume(likefile, N_DIMENSIONS, standard_dimension_order,
+  if (input_volume(likefile, VIO_N_DIMENSIONS, standard_dimension_order,
 		   NC_UNSPECIFIED, /* data type */ FALSE,
 		   NC_UNSPECIFIED, NC_UNSPECIFIED, /* min, max */
-		   TRUE, &like_volume, (minc_input_options *) NULL) != OK) {
+		   TRUE, &like_volume, (minc_input_options *) NULL) != VIO_OK) {
     (void) fprintf(stderr, "Error reading file %s\n", likefile);
     return EXIT_FAILURE;
   }
    
-  grid_volume = create_volume(N_DIMENSIONS+1, 
+  grid_volume = create_volume(VIO_N_DIMENSIONS+1, 
 			      grid_dimension_order, NC_SHORT, true, 0, 0);
 
   get_volume_sizes(like_volume, &sizes[1]);
@@ -345,7 +349,7 @@ int create_grid_volume_from_example(char *likefile, Volume &grid_volume)
   copy_general_transform(transform, new_transform);
   set_voxel_to_world_transform(grid_volume, new_transform); */
 
-  for (i = 0; i < N_DIMENSIONS; i++) {
+  for (i = 0; i < VIO_N_DIMENSIONS; i++) {
     get_volume_direction_cosine(like_volume, i, cosine);
     set_volume_direction_cosine(grid_volume, i+1, cosine);
   }
