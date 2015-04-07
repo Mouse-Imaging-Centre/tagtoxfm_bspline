@@ -3,3 +3,13 @@ create an approximate grid transform using tensor cubic B splines
 
 Created:  April 7, 2006   John G. Sled 
 using code from tagtoxfm by Peter Neelin
+
+Installation:
+-------------
+
+./autogen.sh 
+./configure  --prefix=/path/to/desired/install  --with-minc2  --with-build-path=/path/to/top-level/minc/installation/
+make clean
+make
+make install
+
